@@ -312,7 +312,7 @@ class AdmWindow(object):
 "}")
         self.btnEditarAlunos.setObjectName("btnEditarAlunos")
         self.btnExcluirAlunos = QtWidgets.QPushButton(self.pageVerAlunos)
-        self.btnExcluirAlunos.setGeometry(QtCore.QRect(1090, 280, 121, 51))
+        self.btnExcluirAlunos.setGeometry(QtCore.QRect(1090, 360, 121, 51))
         self.btnExcluirAlunos.setStyleSheet("QPushButton {\n"
 "    background-color: #FFAE9F;\n"
 "}\n"
@@ -325,6 +325,21 @@ class AdmWindow(object):
 "    background-color: #BF8177;\n"
 "}")
         self.btnExcluirAlunos.setObjectName("btnExcluirAlunos")
+        self.btnVerNotas = QtWidgets.QPushButton(self.pageVerAlunos)
+        self.btnVerNotas.setObjectName("btnVerNotas")
+        self.btnVerNotas.setText('Ver Notas')
+        self.btnVerNotas.setGeometry(QtCore.QRect(1090, 280, 121, 51))
+        self.btnVerNotas.setStyleSheet("QPushButton {\n"
+"    background-color: #d3f9ff;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #BEE0E6;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #9FBBBF;\n"
+"}")
         self.label_14 = QtWidgets.QLabel(self.pageVerAlunos)
         self.label_14.setGeometry(QtCore.QRect(480, 30, 111, 31))
         font = QtGui.QFont()
@@ -530,6 +545,23 @@ class AdmWindow(object):
         self.btnVerTurmas.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.btnVerTurmas.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.btnVerTurmas.setObjectName("btnVerTurmas")
+        self.btnProximoBimestre = QtWidgets.QPushButton(self.frame_2)
+        self.btnProximoBimestre.setGeometry(QtCore.QRect(190, 400, 151, 51))
+        self.btnProximoBimestre.setFocusPolicy(QtCore.Qt.ClickFocus)
+        self.btnProximoBimestre.setText('Proximo Bimestre')
+        self.btnProximoBimestre.setStyleSheet("QPushButton {\n"
+"    background-color: #d3f9ff;\n"
+"    border: 1px solid #9FBBBF;\n"
+"    border-radius: 10px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #BEE0E6;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #9FBBBF;\n"
+"}")
         self.buttonGroup.addButton(self.btnVerTurmas)
         self.btnLogout = QtWidgets.QPushButton(self.frame_2)
         self.btnLogout.setGeometry(QtCore.QRect(190, 760, 151, 61))
@@ -567,7 +599,19 @@ class AdmWindow(object):
         self.buttonGroup.setId(self.btnVerAlunos, 2)
         self.buttonGroup.setId(self.btnVerProfessores, 3)
         self.buttonGroup.setId(self.btnVerTurmas, 4)
-        
+
+        def trocar_posicao_cursor(input):
+            texto = input.text()
+            #print(texto)
+            if texto == '() -' or texto == '..-':
+                input.setCursorPosition(0)
+
+        self.telefoneProfessor.cursorPositionChanged.connect(lambda: trocar_posicao_cursor(self.telefoneProfessor))
+        self.telefoneAluno.cursorPositionChanged.connect(lambda: trocar_posicao_cursor(self.telefoneAluno))
+
+        self.cpfAluno.cursorPositionChanged.connect(lambda: trocar_posicao_cursor(self.cpfAluno))
+        self.cpfProfessor.cursorPositionChanged.connect(lambda: trocar_posicao_cursor(self.cpfProfessor))
+
         self.retranslateUi(MainWindow)
         self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)

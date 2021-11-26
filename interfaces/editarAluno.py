@@ -108,6 +108,14 @@ class EditAlunoWindow(object):
         self.btnCancelar.setObjectName("btnCancelar")
         MainWindow.setCentralWidget(self.centralwidget)
 
+        def trocar_posicao_cursor():
+            texto = self.alunoTelefone.text()
+
+            if texto == '() -':
+                self.alunoTelefone.setCursorPosition(0)
+
+        self.alunoTelefone.cursorPositionChanged.connect(trocar_posicao_cursor)
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 

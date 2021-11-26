@@ -24,12 +24,15 @@ class Aluno():
     def __init__(self) -> None:
         self.nome = None
         self.nascimento = None
+        self.id = None
         
     
     def variavel_para_modelo(self, nome = None, nascimento = None):
         self.nascimento = nascimento
         self.nome = nome 
-        
+    
+    def passar_id(self, id):
+        self.id = id
 
 class Usuario():
     def __init__(self) -> None:

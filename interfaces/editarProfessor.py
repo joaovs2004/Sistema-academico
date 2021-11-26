@@ -108,6 +108,14 @@ class EditProfessorWindow(object):
         self.label.setObjectName("label")
         MainWindow.setCentralWidget(self.centralwidget)
 
+        def trocar_posicao_cursor():
+            texto = self.professorTelefone.text()
+
+            if texto == '() -':
+                self.professorTelefone.setCursorPosition(0)
+
+        self.professorTelefone.cursorPositionChanged.connect(trocar_posicao_cursor)
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 

@@ -175,51 +175,66 @@ class AlunoWindow(object):
         self.label_23.setScaledContents(True)
         self.label_23.setObjectName("label_23")
         self.labelEmail = QtWidgets.QLabel(self.pageInformacoes)
-        self.labelEmail.setGeometry(QtCore.QRect(430, 330, 261, 31))
+        self.labelEmail.setGeometry(QtCore.QRect(430, 330, 500, 31))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.labelEmail.setFont(font)
         self.labelEmail.setObjectName("labelEmail")
         self.labelTelefone = QtWidgets.QLabel(self.pageInformacoes)
-        self.labelTelefone.setGeometry(QtCore.QRect(410, 360, 281, 31))
+        self.labelTelefone.setGeometry(QtCore.QRect(410, 360, 700, 31))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.labelTelefone.setFont(font)
         self.labelTelefone.setObjectName("labelTelefone")
         self.labelCpf = QtWidgets.QLabel(self.pageInformacoes)
-        self.labelCpf.setGeometry(QtCore.QRect(450, 300, 231, 21))
+        self.labelCpf.setGeometry(QtCore.QRect(450, 300, 500, 21))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.labelCpf.setFont(font)
         self.labelCpf.setObjectName("labelCpf")
         self.labelNome = QtWidgets.QLabel(self.pageInformacoes)
-        self.labelNome.setGeometry(QtCore.QRect(430, 200, 241, 31))
+        self.labelNome.setGeometry(QtCore.QRect(430, 200, 600, 31))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.labelNome.setFont(font)
         self.labelNome.setObjectName("labelNome")
         self.labelNasc = QtWidgets.QLabel(self.pageInformacoes)
-        self.labelNasc.setGeometry(QtCore.QRect(330, 260, 351, 31))
+        self.labelNasc.setGeometry(QtCore.QRect(330, 260, 500, 31))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.labelNasc.setFont(font)
         self.labelNasc.setObjectName("labelNasc")
         self.labelSexo = QtWidgets.QLabel(self.pageInformacoes)
-        self.labelSexo.setGeometry(QtCore.QRect(430, 400, 271, 31))
+        self.labelSexo.setGeometry(QtCore.QRect(430, 400, 500, 31))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.labelSexo.setFont(font)
         self.labelSexo.setObjectName("labelSexo")
         self.labelResponsavel = QtWidgets.QLabel(self.pageInformacoes)
-        self.labelResponsavel.setGeometry(QtCore.QRect(380, 230, 291, 31))
+        self.labelResponsavel.setGeometry(QtCore.QRect(380, 230, 700, 31))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.labelResponsavel.setFont(font)
         self.labelResponsavel.setObjectName("labelResponsavel")
         self.stackedWidget.addWidget(self.pageInformacoes)
         MainWindow.setCentralWidget(self.centralwidget)
+        
+        self.btnNotas.setStyleSheet('background-color: #BEE0E6')
 
-        self.btnNotas.setFocus()
+        def mudar_cor(button):
+                for btn in [self.btnNotas, self.btnInformacoes]:
+                        btn.setStyleSheet("QPushButton {\n"
+        "    color: #353e40;\n"
+        "    border: none;\n"
+        "}\n"
+        "\n"
+        "QPushButton:hover,  QPushButton:focus {\n"
+        "    background-color: #BEE0E6\n"
+        "}\n")
+                        button.setStyleSheet('background-color: #BEE0E6')
+
+        self.buttonGroup.buttonClicked.connect(mudar_cor)
+
         self.buttonGroup.setId(self.btnNotas, 0)
         self.buttonGroup.setId(self.btnInformacoes, 1)
 

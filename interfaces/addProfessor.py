@@ -50,13 +50,21 @@ class AddProfessorWindow(object):
         self.comboBoxDisciplina = QtWidgets.QComboBox(self.centralwidget)
         self.comboBoxDisciplina.setGeometry(QtCore.QRect(180, 140, 241, 25))
         self.comboBoxDisciplina.setObjectName("comboBoxDisciplina")
-        self.comboBoxDisciplina.setStyleSheet("QComboBox {"
-        "       background-color: #EDFDFF"
-        "}"
-        "QComboBox::item:selected {"
-        "       color: rgb(53, 62, 64)"
-        "}"
-        )
+        self.comboBoxDisciplina.setStyleSheet("QComboBox {\n"
+"    background-color: white;\n"
+"    border: 1px solid #9FBBBF;\n"
+"    border-radius: 5px;\n"
+"    color: #353e40;\n"
+"}\n"
+"\n"
+"QComboBox::item {\n"
+"    background-color: white;\n"
+"}\n"
+"\n"
+"QComboBox::item:selected {\n"
+"    background-color: #e6e6e6;\n"
+"    \n"
+"}\n")
         self.btnCancelar = QtWidgets.QPushButton(self.centralwidget)
         self.btnCancelar.setGeometry(QtCore.QRect(280, 210, 121, 41))
         self.btnCancelar.setObjectName("btnCancelar")

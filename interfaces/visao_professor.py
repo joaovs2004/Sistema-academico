@@ -246,6 +246,8 @@ class VisaoProfessorWindow(object):
         self.stackedWidget.addWidget(self.pageTurmas)
         MainWindow.setCentralWidget(self.centralwidget)
         
+        self.btnTurmas.setStyleSheet('background-color: #BEE0E6')
+
         def mudar_cor(button):
                 for btn in [self.btnTurmas, self.btnInformacoes]:
                         btn.setStyleSheet("QPushButton {\n"
@@ -262,7 +264,6 @@ class VisaoProfessorWindow(object):
         self.btnTurmas.setFocus()
         self.buttonGroup.setId(self.btnTurmas, 1)
         self.buttonGroup.setId(self.btnInformacoes, 0)
-        
 
         self.retranslateUi(MainWindow)
         self.stackedWidget.setCurrentIndex(1)
