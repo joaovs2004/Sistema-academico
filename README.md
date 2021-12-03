@@ -10,7 +10,7 @@ Este projeto é um sistema academico com 3 tipos tipos de usuarios:
 
 ### Dependências
 * [PyQt5](https://pypi.org/project/PyQt5/)
-* [cpf](https://pypi.org/project/cpf/)
+* [pycpfcnpj](https://github.com/matheuscas/pycpfcnpj)
 * [pyIsEmail](https://pypi.org/project/pyIsEmail/)
 
 ### Rodando o programa

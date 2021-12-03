@@ -58,7 +58,7 @@ def criar_usuario(usuario, senha, tipo_usuario):
     criar_tabela_usuario()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f'INSERT INTO usuarios (usuario, senha, tipo_usuario) VALUES("{usuario}", "{senha}", {tipo_usuario});')
+    cursor.execute(f'INSERT INTO usuarios (usuario, senha, tipo_usuario) VALUES(?, ?, ?);', (usuario, senha, tipo_usuario))
     banco.commit()
     banco.close()
 
@@ -66,7 +66,7 @@ def criar_aluno(nome, responsavel, nascimento, cpf, email, telefone, sexo, matri
     criar_tabela_aluno()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f'INSERT INTO aluno VALUES("{nome}", "{responsavel}", "{nascimento}", "{cpf}", "{email}", "{telefone}", "{sexo}", "{matricula}", {id});')
+    cursor.execute(f'INSERT INTO aluno VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);', (nome, responsavel, nascimento, cpf, email, telefone, sexo, matricula, id))
     banco.commit()
     banco.close()
 
@@ -74,7 +74,7 @@ def criar_professor(nome, nascimento, cpf, email, telefone, sexo, matricula, id)
     criar_tabela_professor()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f'INSERT INTO professor VALUES("{nome}", "{nascimento}", "{cpf}", "{email}", "{telefone}", "{sexo}","{matricula}", {id});')
+    cursor.execute(f'INSERT INTO professor VALUES(?, ?, ?, ?, ?, ?, ?, ?);', (nome, nascimento, cpf, email, telefone, sexo, matricula, id))
     banco.commit()
     banco.close()
 
@@ -83,22 +83,6 @@ def deletar_usuario_por_senha(senha):
     banco = conectar()
     cursor = banco.cursor()
     cursor.execute(f'DELETE FROM usuarios WHERE senha="{senha}"')
-    banco.commit()
-    banco.close()
-
-def deletar_aluno_por_matricula(matricula):
-    criar_tabela_aluno()
-    banco = conectar()
-    cursor = banco.cursor()
-    cursor.execute(f'DELETE FROM aluno WHERE matricula="{matricula}"')
-    banco.commit()
-    banco.close()
-
-def deletar_professor_por_matricula(matricula):
-    criar_tabela_professor()
-    banco = conectar()
-    cursor = banco.cursor()
-    cursor.execute(f'DELETE FROM professor WHERE matricula="{matricula}"')
     banco.commit()
     banco.close()
 
@@ -130,7 +114,7 @@ def buscar_usuario_por_nome_e_senha(usuario, senha):
     criar_tabela_usuario()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f'SELECT rowid, * FROM usuarios WHERE usuario="{usuario}" AND senha="{senha}";')
+    cursor.execute('SELECT rowid, * FROM usuarios WHERE usuario=? AND senha=?;', (usuario, senha))
     return cursor.fetchone()
 
 def buscar_usuario_por_matricula(matricula):
@@ -145,16 +129,20 @@ def buscar_matricula(matricula):
     criar_tabela_professor()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f'SELECT p.matricula, a.matricula FROM professor p JOIN aluno a WHERE p.matricula="{matricula}" OR a.matricula="{matricula}";')
-    return cursor.fetchone()
+    matriculas = []
+    matriculas.append(cursor.execute(f'SELECT matricula FROM professor WHERE matricula=?', (matricula,)).fetchone())
+    matriculas.append(cursor.execute(f'SELECT matricula FROM aluno WHERE matricula=?', (matricula,)).fetchone())
+    return matriculas
 
 def buscar_cpf(cpf):
     criar_tabela_aluno()
     criar_tabela_professor()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f'SELECT p.cpf, a.cpf FROM professor p JOIN aluno a WHERE p.cpf="{cpf}" OR a.cpf="{cpf}";')
-    return cursor.fetchone()
+    cpfs = []
+    cpfs.append(cursor.execute('SELECT cpf FROM aluno WHERE cpf=?', (cpf,)).fetchone())
+    cpfs.append(cursor.execute('SELECT cpf FROM professor WHERE cpf=?', (cpf,)).fetchone())
+    return cpfs
 
 def buscar_todos_alunos():
     criar_tabela_aluno()
@@ -167,7 +155,7 @@ def buscar_aluno_por_nome_like(nome):
     criar_tabela_aluno()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f"SELECT * FROM aluno WHERE nome LIKE '%{nome}%'")
+    cursor.execute("SELECT * FROM aluno WHERE nome LIKE '%'||?||'%'", (nome,))
     return cursor.fetchall()
 
 def buscar_aluno_por_matricula(matricula):
@@ -181,14 +169,14 @@ def buscar_professor_por_nome_like(nome):
     criar_tabela_professor()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f'SELECT * FROM professor WHERE nome LIKE "%{nome}%"')
+    cursor.execute('SELECT * FROM professor WHERE nome LIKE "%"||?||"%"', (nome,))
     return cursor.fetchall()
 
 def buscar_aluno_por_nome_exato(nome):
     criar_tabela_aluno()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f"SELECT rowid, * FROM aluno WHERE nome='{nome}'")
+    cursor.execute(f"SELECT rowid, * FROM aluno WHERE nome=?", (nome,))
     return cursor.fetchone()
 
 def buscar_turmas_aluno_por_matricula(matricula):
@@ -202,7 +190,7 @@ def buscar_professor_por_nome_exato(nome):
     criar_tabela_professor()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f'SELECT rowid, * FROM professor WHERE nome="{nome}"')
+    cursor.execute(f'SELECT rowid, * FROM professor WHERE nome=?', (nome,))
     return cursor.fetchone()
 
 def buscar_todos_professores():
@@ -272,7 +260,7 @@ def alterar_aluno(nome, email, telefone, matricula):
     criar_tabela_aluno()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f'UPDATE aluno SET nome = "{nome}", email = "{email}", telefone = "{telefone}" WHERE matricula="{matricula}"')
+    cursor.execute(f'UPDATE aluno SET nome = ?, email = ?, telefone = ? WHERE matricula="{matricula}"', (nome, email, telefone))
     banco.commit()
     banco.close()
 
@@ -280,7 +268,15 @@ def alterar_professor(nome, email, telefone, matricula):
     criar_tabela_professor()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f'UPDATE professor SET nome = "{nome}", email = "{email}", telefone = "{telefone}" WHERE matricula="{matricula}"')
+    cursor.execute(f'UPDATE professor SET nome = ?, email = ?, telefone = ? WHERE matricula="{matricula}"', (nome, email, telefone))
+    banco.commit()
+    banco.close()
+
+def alterar_usuario(usuario, matricula):
+    criar_tabela_usuario()
+    banco = conectar()
+    cursor = banco.cursor()
+    cursor.execute('UPDATE usuarios SET usuario = ? WHERE senha=?', (usuario, matricula))
     banco.commit()
     banco.close()
 
@@ -289,7 +285,7 @@ def adicionar_professor_turma(ano, nivel, professor, materia, id):
     criar_tabela_turmas_professor()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f'INSERT INTO turmasProfessor VALUES("{ano}", "{nivel}", "{professor}", "{materia}", {id})')
+    cursor.execute(f'INSERT INTO turmasProfessor VALUES("{ano}", "{nivel}", ?, "{materia}", {id})', (professor,))
     banco.commit()
     banco.close()
 
@@ -298,16 +294,16 @@ def adicionar_aluno_turma(ano, nivel, aluno, id):
     criar_tabela_turmas_aluno()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f"INSERT INTO turmasAluno VALUES('{ano}', '{nivel}', '{aluno}', {id})")
+    cursor.execute(f"INSERT INTO turmasAluno VALUES('{ano}', '{nivel}', ?, {id})", (aluno,))
     banco.commit()
     banco.close()
 
-def excluir_professor_turma(matricula, ano, nivel):
+def excluir_professor_turma(matricula, ano, nivel, materia):
     criar_tabela_professor()
     criar_tabela_turmas_professor()
     banco = conectar()
     cursor = banco.cursor()
-    cursor.execute(f'DELETE FROM turmasProfessor WHERE professor_id=(SELECT usuario_id FROM professor WHERE matricula="{matricula}") AND ano="{ano}" AND nivel="{nivel}"')
+    cursor.execute(f'DELETE FROM turmasProfessor WHERE professor_id=(SELECT usuario_id FROM professor WHERE matricula="{matricula}") AND ano="{ano}" AND nivel="{nivel}" AND materia="{materia}"')
     banco.commit()
     banco.close()
 

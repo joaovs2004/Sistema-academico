@@ -43,6 +43,7 @@ class AvisoWindow(object):
 "    background-color: #74AD7D;\n"
 "}")
         self.btnOk.setObjectName("btnOk")
+        self.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Return"), self.btnOk)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)

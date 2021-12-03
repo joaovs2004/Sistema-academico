@@ -58,6 +58,7 @@ class MateriasWindow(object):
 "    background-color: #74AD7D;\n"
 "}")
         self.btnSelecionar.setObjectName("btnSelecionar")
+        self.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Return"), self.btnSelecionar)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)

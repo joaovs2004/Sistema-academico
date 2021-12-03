@@ -108,6 +108,7 @@ class NotasWindow(object):
         self.btnAplicar = QtWidgets.QPushButton(self.centralwidget)
         self.btnAplicar.setGeometry(QtCore.QRect(30, 400, 131, 61))
         self.btnAplicar.setObjectName("btnAplicar")
+        self.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Return"), self.btnAplicar)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)

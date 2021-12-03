@@ -81,7 +81,16 @@ class AdmWindow(object):
 "    background-color: white;\n"
 "    border: 1px solid #9FBBBF;\n"
 "    border-radius: 5px;\n"
-"}")
+"}"
+"QDateTimeEdit::up-button {"
+"    subcontrol-position: top right;"
+"    subcontrol-origin: padding;"
+"}"
+"QDateTimeEdit::down-button {"
+"    subcontrol-position: bottom right;"
+"    subcontrol-origin: padding;"
+"}"
+)
         self.stackedWidget.setObjectName("stackedWidget")
         self.pageAddProfessor = QtWidgets.QWidget()
         self.pageAddProfessor.setObjectName("pageAddProfessor")
@@ -602,7 +611,7 @@ class AdmWindow(object):
 
         def trocar_posicao_cursor(input):
             texto = input.text()
-            #print(texto)
+
             if texto == '() -' or texto == '..-':
                 input.setCursorPosition(0)
 
@@ -611,6 +620,9 @@ class AdmWindow(object):
 
         self.cpfAluno.cursorPositionChanged.connect(lambda: trocar_posicao_cursor(self.cpfAluno))
         self.cpfProfessor.cursorPositionChanged.connect(lambda: trocar_posicao_cursor(self.cpfProfessor))
+
+        self.shortcut1 = QtWidgets.QShortcut(QtGui.QKeySequence("Return"), self.btnBuscarAlunos)
+        self.shortcut2 = QtWidgets.QShortcut(QtGui.QKeySequence("Return"), self.btnBuscarProfessor)
 
         self.retranslateUi(MainWindow)
         self.stackedWidget.setCurrentIndex(0)

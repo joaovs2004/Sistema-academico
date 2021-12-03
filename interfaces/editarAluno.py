@@ -106,6 +106,7 @@ class EditAlunoWindow(object):
 "    background-color: #BF8177;\n"
 "}")
         self.btnCancelar.setObjectName("btnCancelar")
+        self.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Return"), self.btnEditar)
         MainWindow.setCentralWidget(self.centralwidget)
 
         def trocar_posicao_cursor():

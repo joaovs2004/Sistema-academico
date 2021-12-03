@@ -106,6 +106,7 @@ class EditProfessorWindow(object):
         font.setPointSize(12)
         self.label.setFont(font)
         self.label.setObjectName("label")
+        self.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Return"), self.btnEditar)
         MainWindow.setCentralWidget(self.centralwidget)
 
         def trocar_posicao_cursor():

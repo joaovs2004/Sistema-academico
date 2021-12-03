@@ -1,12 +1,11 @@
-from sqlite3.dbapi2 import IntegrityError, Row
+from sqlite3.dbapi2 import IntegrityError
 import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QComboBox, QCompleter, QMainWindow, QApplication, QTableWidgetItem, QWidget
-from dns.rcode import NOERROR
+from PyQt5.QtWidgets import QCompleter, QMainWindow, QApplication, QTableWidgetItem
 
 from banco import *
-import cpf as lib_cpf
+from pycpfcnpj import cpfcnpj as lib_cpf
 from pyisemail import is_email
 
 from random import randint
@@ -64,11 +63,13 @@ class Adm(QMainWindow, AdmWindow):
 
         self.btnBuscarProfessor.clicked.connect(self.buscar_professor)
         self.btnBuscarAlunos.clicked.connect(self.buscar_aluno)
+        self.shortcut1.activated.connect(self.buscar_aluno)
+        self.shortcut2.activated.connect(self.buscar_professor)
 
         self.btnExcluirAlunos.clicked.connect(self.excluir_aluno)
         self.btnExcluirProfessor.clicked.connect(self.excluir_professor)
 
-        self.btnProximoBimestre.clicked.connect(lambda: tela_confirmar.show())
+        self.btnProximoBimestre.clicked.connect(self.proximo_bimestre)
 
         self.btnVerNotas.clicked.connect(self.mostrar_notas)
 
@@ -106,7 +107,7 @@ class Adm(QMainWindow, AdmWindow):
 
             tela_editarProfessor.show()  
         else:
-            mostrar_aviso('Selecione um professor para editar')  
+            mostrar_aviso('Selecione um professor para editar')
 
     def mostrar_turma(self, item):
         linha = self.listaTurmas.currentRow()
@@ -182,6 +183,14 @@ class Adm(QMainWindow, AdmWindow):
             tabela.setItem(rowPos, 3, QtWidgets.QTableWidgetItem(aluno[8]))
             tabela.setItem(rowPos, 4, QtWidgets.QTableWidgetItem(aluno[5]))
             tabela.setItem(rowPos, 5, QtWidgets.QTableWidgetItem(aluno[6]))
+
+            tabela.item(rowPos, 0).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 2).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 3).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 4).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 5).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+
             rowPos += 1
     
     def trazer_professores(self):
@@ -195,6 +204,13 @@ class Adm(QMainWindow, AdmWindow):
             tabela.setItem(rowPos, 2, QtWidgets.QTableWidgetItem(professor[4]))
             tabela.setItem(rowPos, 3, QtWidgets.QTableWidgetItem(professor[5]))
             tabela.setItem(rowPos, 4, QtWidgets.QTableWidgetItem(professor[7]))
+
+            tabela.item(rowPos, 0).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 2).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 3).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 4).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+
             rowPos += 1
 
     def add_aluno(self):
@@ -209,19 +225,22 @@ class Adm(QMainWindow, AdmWindow):
         matricula = randint(100000, 999999)
         matricula_banco = buscar_matricula(matricula)
         cpf_banco = buscar_cpf(cpf)
-        
-        if matricula_banco != None:
-            while matricula_banco != None:
+
+        if matricula_banco[0] != None or matricula_banco[1] != None:
+            matricula = randint(100000, 999999)
+            matricula_banco = buscar_matricula(matricula)
+
+            while matricula_banco[0] != None or matricula_banco[1] != None:
                 matricula = randint(100000, 999999)
                 matricula_banco = buscar_matricula(matricula)
         
         if nome == '' or nascimento == '' or sexo == '' or responsavel == '':
             mostrar_aviso('Preencha todos os dados') 
-        elif lib_cpf.checar(cpf) == False:
+        elif lib_cpf.validate(cpf) == False:
             mostrar_aviso('Cpf invalido')
         elif is_email(email) == False:
             mostrar_aviso('Email invalido') 
-        elif cpf_banco != None:
+        elif cpf_banco[0] != None or cpf_banco[1] != None:
             mostrar_aviso('Cpf já existe') 
         else:
             criar_usuario(nome, matricula, 2)
@@ -242,19 +261,22 @@ class Adm(QMainWindow, AdmWindow):
         matricula = randint(100000, 999999)
         matricula_banco = buscar_matricula(matricula)
         cpf_banco = buscar_cpf(cpf)
+        
+        if matricula_banco[0] != None or matricula_banco[1] != None:
+            matricula = randint(100000, 999999)
+            matricula_banco = buscar_matricula(matricula)
 
-        if matricula_banco != None:
-            while matricula_banco != None:
+            while matricula_banco[0] != None or matricula_banco[1] != None:
                 matricula = randint(100000, 999999)
                 matricula_banco = buscar_matricula(matricula)
 
         if nome == '' or nascimento == '' or sexo == '':
             mostrar_aviso('Preencha todos os dados')
-        elif lib_cpf.checar(cpf) == False:
+        elif lib_cpf.validate(cpf) == False:
             mostrar_aviso('Cpf invalido')
         elif is_email(email) == False:
             mostrar_aviso('Email invalido')
-        elif cpf_banco != None:
+        elif cpf_banco[0] != None or cpf_banco[1] != None:
             mostrar_aviso('Cpf já existe')
         else:
             criar_usuario(nome, matricula, 1)
@@ -302,6 +324,13 @@ class Adm(QMainWindow, AdmWindow):
             tabela.setItem(rowPos, 2, QtWidgets.QTableWidgetItem(professor[3]))
             tabela.setItem(rowPos, 3, QtWidgets.QTableWidgetItem(professor[4]))
             tabela.setItem(rowPos, 4, QtWidgets.QTableWidgetItem(professor[6]))
+
+            tabela.item(rowPos, 0).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 2).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 3).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 4).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+
             rowPos += 1
     
     def buscar_aluno(self):
@@ -319,6 +348,14 @@ class Adm(QMainWindow, AdmWindow):
             tabela.setItem(rowPos, 3, QtWidgets.QTableWidgetItem(aluno[7]))
             tabela.setItem(rowPos, 4, QtWidgets.QTableWidgetItem(aluno[4]))
             tabela.setItem(rowPos, 5, QtWidgets.QTableWidgetItem(aluno[5]))
+
+            tabela.item(rowPos, 0).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 2).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 3).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 4).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(rowPos, 5).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+
             rowPos += 1
 
     def mostrar_notas(self):
@@ -354,11 +391,19 @@ class Adm(QMainWindow, AdmWindow):
                     for notas in notas_banco:                      
                         final = (notas[1] + notas[2] + notas[3] + notas[4] + notas[5] + notas[6]) / 6
                         tabela.setItem(rowPos, notas[7] - 1, QtWidgets.QTableWidgetItem(f'{final:.1f}'))
+
+                        tabela.item(rowPos, notas[7] - 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
                 
                     rowPos += 1               
             
-            tela_aluno_notas.show()     
+            tela_aluno_notas.show() 
 
+    def proximo_bimestre(self):
+        bimestre_atual = buscar_bimestre()
+
+        tela_confirmar.setWindowTitle(f"Bimestre {bimestre_atual[0]}")
+        tela_confirmar.show()
+        
     def trocarAba(self, button):
         self.stackedWidget.setCurrentIndex(self.buttonGroup.id(button))
     
@@ -386,6 +431,11 @@ class Adm(QMainWindow, AdmWindow):
                 tabela.setItem(rowPos, 2, QtWidgets.QTableWidgetItem(professor[1])) 
             
                 tabela.item(rowPos, 0).setData(QtCore.Qt.UserRole, professor[6])
+
+                tabela.item(rowPos, 0).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+                tabela.item(rowPos, 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+                tabela.item(rowPos, 2).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+
                 rowPos += 1
 
         def trazer_alunos(self):
@@ -400,6 +450,10 @@ class Adm(QMainWindow, AdmWindow):
                 tabela.setItem(rowPos, 1, QtWidgets.QTableWidgetItem(aluno[3]))
                 
                 tabela.item(rowPos, 0).setData(QtCore.Qt.UserRole, aluno[7])
+
+                tabela.item(rowPos, 0).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+                tabela.item(rowPos, 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+
                 rowPos += 1
         
         def excluir_professor(self):
@@ -410,8 +464,9 @@ class Adm(QMainWindow, AdmWindow):
                 mostrar_aviso('Selecione um professor para excluir')
             else:
                 matricula = tabela.item(linha, 0).data(QtCore.Qt.UserRole)
+                materia = tabela.item(linha, 1).text()
 
-                excluir_professor_turma(matricula, modelo_turma.ano, modelo_turma.nivel)
+                excluir_professor_turma(matricula, modelo_turma.ano, modelo_turma.nivel, materia)
                 
                 self.trazer_professores()
 
@@ -497,6 +552,7 @@ class Adm(QMainWindow, AdmWindow):
             super().setupUi(self)
 
             self.btnEditar.clicked.connect(self.edit_aluno)
+            self.shortcut.activated.connect(self.edit_aluno)
             self.btnCancelar.clicked.connect(lambda: fechar(self, self.alunoNome, self.alunoEmail, self.alunoTelefone))
         
         def edit_aluno(self):
@@ -513,10 +569,11 @@ class Adm(QMainWindow, AdmWindow):
                 mostrar_aviso('Email invalido')
             else:
                 matricula = tabela.item(linha, 3).text()
-
+                
+                alterar_usuario(nome, matricula)
                 alterar_aluno(nome, email, telefone, matricula)
                 limpar_campos(self.alunoNome, self.alunoEmail, self.alunoTelefone)
-
+                
                 self.close()
                 tela_adm.trazer_alunos()
         
@@ -526,6 +583,7 @@ class Adm(QMainWindow, AdmWindow):
             super().setupUi(self)
             
             self.btnEditar.clicked.connect(self.edit_professor)
+            self.shortcut.activated.connect(self.edit_professor)
             self.btnCancelar.clicked.connect(lambda: fechar(self, self.professorEmail, self.professorNome, self.professorTelefone))
 
         def edit_professor(self):
@@ -543,6 +601,7 @@ class Adm(QMainWindow, AdmWindow):
             else:
                 matricula = tabela.item(linha, 4).text()
 
+                alterar_usuario(nome, matricula)
                 alterar_professor(nome, email, telefone, matricula)
                 limpar_campos(self.professorNome, self.professorEmail, self.professorTelefone)
 
@@ -680,6 +739,7 @@ class VisaoProfessor(QMainWindow, VisaoProfessorWindow):
             super().setupUi(self)
         
             self.btnAplicar.clicked.connect(self.aplicar_notas)
+            self.shortcut.activated.connect(self.aplicar_notas)
         
         def checar_notas(self):
             bimestre_banco = buscar_bimestre()
@@ -801,6 +861,14 @@ class VisaoAluno(QMainWindow, AlunoWindow):
             tabela.setItem(5, notas[7] - 1, QtWidgets.QTableWidgetItem(f'{notas[6]}'))
             tabela.setItem(6, notas[7] - 1, QtWidgets.QTableWidgetItem(f'{final:.1f}'))
 
+            tabela.item(0, notas[7] - 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(1, notas[7] - 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(2, notas[7] - 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(3, notas[7] - 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(4, notas[7] - 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(5, notas[7] - 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            tabela.item(6, notas[7] - 1).setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDropEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+
         tela_aluno_notas.show()   
 
 class AlunoNotas(QMainWindow, AlunoNotasWindow):
@@ -814,6 +882,7 @@ class Login(QMainWindow, LoginWindow):
         super().setupUi(self)
 
         self.btnEntrar.clicked.connect(self.logar)
+        self.shortcut.activated.connect(self.logar)
     
     def logar(self):
         usuario = self.inputUsuario.text()
@@ -846,6 +915,7 @@ class Aviso(QMainWindow, AvisoWindow):
         super().setupUi(self)
 
         self.btnOk.clicked.connect(lambda: self.close())
+        self.shortcut.activated.connect(lambda: self.close())
 
 class Confirmar(QMainWindow, ConfirmarWindow):
     def __init__(self, parent = None):
@@ -868,6 +938,7 @@ class Confirmar(QMainWindow, ConfirmarWindow):
                 dropar_tabela_notas()
             else:
                 atualizar_bimestre(bimestre_atual[0] + 1)
+        
         bimestre_atual = buscar_bimestre() 
         self.close()
 
@@ -877,18 +948,20 @@ class Materias(QMainWindow, MateriasWindow):
         super().setupUi(self)
         
         self.btnSelecionar.clicked.connect(self.selecionar_materia)
+        self.shortcut.activated.connect(self.selecionar_materia)
 
     def selecionar_materia(self):
         materia = self.comboBoxMateria.currentText()
-        
+
         modelo_professor.materia_no_modelo(materia)
         self.close()
         tela_alunos.show()
 
-
 if __name__ == "__main__":
+    QApplication.setStyle("Fusion")
     qt = QApplication(sys.argv)
-
+    qt.setWindowIcon(QtGui.QIcon('src/icone_programa.png'))
+    
     tela_adm = Adm()
     tela_turma = Adm().Turma()
     tela_addProfessor = Adm().AddProfessor()

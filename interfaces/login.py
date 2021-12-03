@@ -82,6 +82,8 @@ class LoginWindow(object):
         self.btnEntrar = QtWidgets.QPushButton(self.centralwidget)
         self.btnEntrar.setGeometry(QtCore.QRect(110, 320, 201, 41))
         self.btnEntrar.setObjectName("btnEntrar")
+        self.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Return"), self.btnEntrar)
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
