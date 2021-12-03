@@ -14,7 +14,7 @@ Este projeto é um sistema academico com 3 tipos tipos de usuarios:
 * [pyIsEmail](https://pypi.org/project/pyIsEmail/)
 
 ### Rodando o programa
-Para rodar o programa basta executar o arqui main.py
+Para rodar o programa basta ter instalado o python e as dependências do projeto e então executar o arquivo main.py
 
 **Linux**
 ~~~
