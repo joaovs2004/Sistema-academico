@@ -401,6 +401,10 @@ class Adm(QMainWindow, AdmWindow):
     def proximo_bimestre(self):
         bimestre_atual = buscar_bimestre()
 
+        if bimestre_atual == None:
+            inserir_bimestre()
+            bimestre_atual = buscar_bimestre()
+
         tela_confirmar.setWindowTitle(f"Bimestre {bimestre_atual[0]}")
         tela_confirmar.show()
         
