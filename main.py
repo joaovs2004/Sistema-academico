@@ -644,19 +644,16 @@ class VisaoProfessor(QMainWindow, VisaoProfessorWindow):
 
             for turma in turmas_banco:
                 if turma[1] == 'Ensino Fundamental':
-                    item = lista.findItems(f'{turma[0]}', QtCore.Qt.MatchContains)
-                    if item == []:
-                        lista.insertItem(fundamental, turma[0])
-                        fundamental += 1
-                        medio = fundamental + 1
+                    lista.insertItem(fundamental, turma[0])
+                    fundamental += 1
+                    medio = fundamental + 1
                 elif turma[1] == 'Ensino Medio':
                     fmedio = lista.findItems('Ensino Medio', QtCore.Qt.MatchContains)
                     if fmedio == []:
                         lista.addItem('Ensino Medio')
-                    item = lista.findItems(f'{turma[0]}', QtCore.Qt.MatchContains)
-                    if item == []:
-                        lista.insertItem(medio, turma[0])
-                        medio += 1
+
+                    lista.insertItem(medio, turma[0])
+                    medio += 1
 
             fmedio = lista.findItems('Ensino Medio', QtCore.Qt.MatchContains)
             ffundamental = lista.findItems('Ensino Fundamental', QtCore.Qt.MatchContains)
